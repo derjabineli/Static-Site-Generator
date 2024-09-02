@@ -28,7 +28,16 @@ class TestHTMLNode(unittest.TestCase):
         node = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
         node2 = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
         self.assertEqual(node, node2)
-    
+
+    def test_leaf_empty_string_value(self):
+        node = LeafNode("img", "", {"src": "./emptystring"})
+        self.assertEqual(node.to_html(), '<img src="./emptystring"></img>')
+
+    def test_leaf_empty_string_value2(self):
+        node = LeafNode("p", "")
+        with self.assertRaises(ValueError):
+            node.to_html()
+
     def test_leaf_no_value(self):
         with self.assertRaises(TypeError):
             node = LeafNode("")
@@ -46,18 +55,18 @@ class TestHTMLNode(unittest.TestCase):
             "p",
             [
                 LeafNode("b", "Bold text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
                 LeafNode("i", "italic text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
             ],
         )
         node2 = ParentNode(
             "p",
             [
                 LeafNode("b", "Bold text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
                 LeafNode("i", "italic text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
             ],
         )
 
@@ -68,9 +77,9 @@ class TestHTMLNode(unittest.TestCase):
             "p",
             [
                 LeafNode("b", "Bold text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
                 LeafNode("i", "italic text"),
-                LeafNode(None, "Normal text"),
+                LeafNode("", "Normal text"),
             ],
         )
 
@@ -84,9 +93,9 @@ class TestHTMLNode(unittest.TestCase):
                     "p",
                     [
                         LeafNode("b", "Bold text"),
-                        LeafNode(None, "Normal text"),
+                        LeafNode("", "Normal text"),
                         LeafNode("i", "italic text"),
-                        LeafNode(None, "Normal text"),
+                        LeafNode("", "Normal text"),
                     ],
                 ),
             ],
