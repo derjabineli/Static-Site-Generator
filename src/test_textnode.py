@@ -14,8 +14,8 @@ class TestTextNode(unittest.TestCase):
         node2 = TextNode("This is a different text node", "italic", "https://bye.com")
         self.assertIsNot(node, node2)
     def test_no_url(self):
-        with self.assertRaises(TypeError):
-            node = TextNode("This is a text node", "bold")
+        node = TextNode("This is a text node", "bold")
+        self.assertEqual(node.url, "")
     def test_repr(self):
         node = TextNode("This is a text node", "italic", "https://www.boot.dev")
         self.assertEqual(
@@ -67,7 +67,6 @@ class TestTextNode(unittest.TestCase):
     def test_text_image_html(self):
         text_node = TextNode("Image", "image", "image_url")
         leaf_node = text_node.text_node_to_html_node()
-        print(leaf_node.to_html())
         self.assertEqual(leaf_node.to_html(), '<img src="image_url" alt="Image"></img>')
     def test_text_wrong_text(self):
         text_node = TextNode("Random", "na", "")
