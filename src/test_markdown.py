@@ -1,5 +1,5 @@
 import unittest
-from markdown_utils import split_nodes_delimiter
+from markdown_utils import split_nodes_delimiter, extract_markdown_links, extract_markdown_images
 from textnode import TextNode
 
 text_type_text = "text"
@@ -43,6 +43,21 @@ class TestMarkdownUtils(unittest.TestCase):
         node = TextNode("No trailing delimiter*", text_type_text)
         with self.assertRaises(Exception):
             split_nodes_delimiter([node], text_type_italic)
+    def test_extract_images(self):
+        images = extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)")
+        self.assertEqual(images, [('rick roll', 'https://i.imgur.com/aKaOqIh.gif'), ('obi wan', 'https://i.imgur.com/fJRm4Vk.jpeg')])
+    def test_extract_images_no_closing_parantheses(self):
+        images = extract_markdown_images("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif")
+        self.assertEqual(images, [])
+    def test_extract_image(self):
+        image = extract_markdown_images("This is text with a ![image](https://i.imgur.com/aKaOqIh.gif)")
+        self.assertEqual(image, [('image', 'https://i.imgur.com/aKaOqIh.gif')])
+    def test_extract_links(self):
+        links = extract_markdown_links("This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)")
+        self.assertEqual(links, [('to boot dev', 'https://www.boot.dev'), ('to youtube', 'https://www.youtube.com/@bootdotdev')])
+    def test_extract_link(self):
+        link = extract_markdown_links("This is a link to [wikipedia](https://www.wikipedia.com)")
+        self.assertEqual(link, [('wikipedia', 'https://www.wikipedia.com')])
 
 if __name__ == "__main__":
     unittest.main()
