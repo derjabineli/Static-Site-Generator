@@ -89,9 +89,3 @@ def text_to_textnodes(text):
     new_nodes = split_nodes_image(new_nodes)
     new_nodes = split_nodes_link(new_nodes)
     return new_nodes
-
-# new_nodes = text_to_textnodes('This is text wit a **bold word** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)')
-# print(new_nodes)
-
-# new_nodes = split_nodes_delimiter([TextNode("This is text with a **bolded phrase** in the middle", text_type_text)], "**", text_type_bold)
-# print(new_nodes)
