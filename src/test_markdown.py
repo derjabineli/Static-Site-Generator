@@ -1,5 +1,5 @@
 import unittest
-from markdown_utils import split_nodes_delimiter, extract_markdown_links, extract_markdown_images
+from markdown_utils import split_nodes_delimiter, extract_markdown_links, extract_markdown_images, split_nodes_image, split_nodes_link
 from textnode import TextNode
 
 text_type_text = "text"
@@ -58,6 +58,90 @@ class TestMarkdownUtils(unittest.TestCase):
     def test_extract_link(self):
         link = extract_markdown_links("This is a link to [wikipedia](https://www.wikipedia.com)")
         self.assertEqual(link, [('wikipedia', 'https://www.wikipedia.com')])
+    def test_split_image_nodes(self):
+        node = TextNode(
+         "This is text with a ![image](https://i.imgur.com/aKaOqIh.gif) and another ![image link](https://www.link.com)", text_type_text,)
+        new_nodes = split_nodes_image([node])
+        expected_results = [TextNode("This is text with a ", text_type_text, ''), TextNode('image', text_type_image, 'https://i.imgur.com/aKaOqIh.gif'), TextNode(" and another ", text_type_text, ''), TextNode('image link', text_type_image, 'https://www.link.com')]
+        self.assertEqual(new_nodes, expected_results)
+    def test_split_image_nodes2(self):
+        node = TextNode(
+         "![image](https://i.imgur.com/aKaOqIh.gif) in the beginning", text_type_text)
+        new_nodes = split_nodes_image([node])
+        expected_results = [TextNode('image', text_type_image, 'https://i.imgur.com/aKaOqIh.gif'), TextNode(" in the beginning", text_type_text, '')]
+        self.assertEqual(new_nodes, expected_results)
+    def test_split_image_nodes3(self):
+        node = TextNode(
+         "![image](https://i.imgur.com/aKaOqIh.gif) in the beginning with ![another_image](https://www.anotherimage.gif) trailing", text_type_text)
+        new_nodes = split_nodes_image([node])
+        expected_results = [TextNode('image', text_type_image, 'https://i.imgur.com/aKaOqIh.gif'), TextNode(" in the beginning with ", text_type_text, ''), TextNode('another_image', text_type_image, 'https://www.anotherimage.gif'), TextNode(" trailing", text_type_text, '')]
+        self.assertEqual(new_nodes, expected_results)
+
+    def test_split_image_nodes4(self):
+        node = TextNode(
+         "Node with no images", text_type_text)
+        new_nodes = split_nodes_image([node])
+        expected_results = [TextNode('Node with no images', text_type_text)]
+        self.assertEqual(new_nodes, expected_results)
+    
+    def test_split_image_nodes5(self):
+        node = TextNode(
+         "![only_image](https://www.image.gif)", text_type_text)
+        new_nodes = split_nodes_image([node])
+        expected_results = [TextNode('only_image', text_type_image, "https://www.image.gif")]
+        self.assertEqual(new_nodes, expected_results)
+    
+    def test_split_image_nodes_with_multiple_nodes(self):
+        node = TextNode(
+         "![image](https://i.imgur.com/aKaOqIh.gif) in the beginning with ![another_image](https://www.anotherimage.gif) trailing", text_type_text)
+        node2 = TextNode(
+         "Node with no images", text_type_text)
+        node3 = TextNode(
+         "This is text with a ![image](https://i.imgur.com/aKaOqIh.gif) and another ![image link](https://www.link.com)", text_type_text,)
+        new_nodes = split_nodes_image([node, node2, node3])
+        expected_results = [TextNode('image', text_type_image, 'https://i.imgur.com/aKaOqIh.gif'), TextNode(" in the beginning with ", text_type_text, ''), TextNode('another_image', text_type_image, 'https://www.anotherimage.gif'), TextNode(" trailing", text_type_text, ''), TextNode('Node with no images', text_type_text), TextNode("This is text with a ", text_type_text, ''), TextNode('image', text_type_image, 'https://i.imgur.com/aKaOqIh.gif'), TextNode(" and another ", text_type_text, ''), TextNode('image link', text_type_image, 'https://www.link.com')]
+        self.assertEqual(new_nodes, expected_results)
+
+    def test_split_link_nodes(self):
+        node = TextNode(
+         "[first_link](https://i.imgur.com/aKaOqIh.com) in the beginning with [another_link](https://www.anotherimage.com) trailing", text_type_text)
+        new_nodes = split_nodes_link([node])
+        expected_results = [TextNode("first_link", text_type_link, "https://i.imgur.com/aKaOqIh.com"), TextNode(" in the beginning with ", text_type_text), TextNode("another_link", text_type_link, "https://www.anotherimage.com"), TextNode(" trailing", text_type_text)]
+        self.assertEqual(new_nodes, expected_results)
+    
+    def test_split_link_nodes2(self):
+        node = TextNode(
+         "Here is a [text_link](https://www.anotherimage.com) with text after it", text_type_text)
+        new_nodes = split_nodes_link([node])
+        expected_results = [TextNode("Here is a ", text_type_text), TextNode("text_link", text_type_link, "https://www.anotherimage.com"), TextNode(" with text after it", text_type_text)]
+        self.assertEqual(new_nodes, expected_results)
+
+    def test_split_link_nodes3(self):
+        node = TextNode(
+         "Node with no link", text_type_text)
+        new_nodes = split_nodes_link([node])
+        expected_results = [TextNode("Node with no link", text_type_text)]
+        self.assertEqual(new_nodes, expected_results)
+    
+    def test_split_link_nodes4(self):
+        node = TextNode(
+         "[only_link](https://www.link.com)", text_type_text)
+        new_nodes = split_nodes_link([node])
+        expected_results = [TextNode("only_link", text_type_link, "https://www.link.com")]
+        self.assertEqual(new_nodes, expected_results)
+    
+    def test_split_link_incomplete_link(self):
+        node = TextNode("[link](https://www.incompletelink.com but forgot to add parantheses", text_type_text)
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes, [TextNode("[link](https://www.incompletelink.com but forgot to add parantheses", text_type_text)])
+
+    def test_split_link_with_multiple_nodes(self):
+        node = TextNode("[link](https://www.incompletelink.com but forgot to add parantheses", text_type_text)
+        node2 = TextNode(
+         "Here is a [text_link](https://www.anotherimage.com) with text after it", text_type_text)
+        new_nodes = split_nodes_link([node, node2])
+        expected_results = [TextNode("[link](https://www.incompletelink.com but forgot to add parantheses", text_type_text), TextNode("Here is a ", text_type_text), TextNode("text_link", text_type_link, "https://www.anotherimage.com"), TextNode(" with text after it", text_type_text)]
+        self.assertEqual(new_nodes, expected_results)
 
 if __name__ == "__main__":
     unittest.main()
