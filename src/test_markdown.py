@@ -201,6 +201,30 @@ class TestMarkdownUtils(unittest.TestCase):
             TextNode("image_link", text_type_image, "https://imagelink.com"),
         ]
         self.assertEqual(new_nodes, expected_results)
+    
+    def test_text_to_textnodes4(self):
+        new_nodes = text_to_textnodes("This is text with a ![image link](https://imagelink.com) and ![another image link](image_link.com)")
+        expected_results = [
+            TextNode("This is text with a ", text_type_text),
+            TextNode("image link", text_type_image, "https://imagelink.com"),
+            TextNode(" and ", text_type_text),
+            TextNode("another image link", text_type_image, "image_link.com"),
+        ]
+        self.assertEqual(new_nodes, expected_results)
+
+    def test_text_to_textnodes5(self):
+        new_nodes = text_to_textnodes("This is text with a ![image link](https://imagelink.com) and ![another image link](image_link.com) and some **bolded words** and a `code block`")
+        expected_results = [
+            TextNode("This is text with a ", text_type_text),
+            TextNode("image link", text_type_image, "https://imagelink.com"),
+            TextNode(" and ", text_type_text),
+            TextNode("another image link", text_type_image, "image_link.com"),
+            TextNode(" and some ", text_type_text),
+            TextNode("bolded words", text_type_bold),
+            TextNode(" and a ", text_type_text),
+            TextNode("code block", text_type_code),
+        ]
+        self.assertEqual(new_nodes, expected_results)
 
 if __name__ == "__main__":
     unittest.main()
