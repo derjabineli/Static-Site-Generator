@@ -13,20 +13,21 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     for old_node in old_nodes:
         if old_node.text_type != text_type_text:
             new_nodes.append(old_node)
-        else:
-            text_string = old_node.text
-            sections = text_string.split(delimiter)
-            if len(sections) % 2 == 0:
-                raise Exception("Invalid markdown syntax")
-            for i in range (len(sections)):
-                current_section = sections[i]
-                if current_section == "":
-                    continue
-                if i % 2 == 0:
-                    node = TextNode(current_section, text_type_text)
-                else:
-                    node = TextNode(current_section, text_type)
-                new_nodes.append(node)
+            continue
+        
+        text_string = old_node.text
+        sections = text_string.split(delimiter)
+        if len(sections) % 2 == 0:
+            raise Exception("Invalid markdown syntax")
+        for i in range (len(sections)):
+            current_section = sections[i]
+            if current_section == "":
+                continue
+            if i % 2 == 0:
+                node = TextNode(current_section, text_type_text)
+            else:
+                node = TextNode(current_section, text_type)
+            new_nodes.append(node)
     return new_nodes
 
 def extract_markdown_images(text):
@@ -81,4 +82,16 @@ def split_nodes_link(old_nodes):
     return new_nodes
 
 def text_to_textnodes(text):
-    pass
+    new_nodes = [TextNode(text, text_type_text)]
+    new_nodes = split_nodes_delimiter(new_nodes, "**", text_type_bold)
+    new_nodes = split_nodes_delimiter(new_nodes, "*", text_type_italic)
+    new_nodes = split_nodes_delimiter(new_nodes, "`", text_type_code)
+    new_nodes = split_nodes_image(new_nodes)
+    new_nodes = split_nodes_link(new_nodes)
+    return new_nodes
+
+# new_nodes = text_to_textnodes('This is text wit a **bold word** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)')
+# print(new_nodes)
+
+# new_nodes = split_nodes_delimiter([TextNode("This is text with a **bolded phrase** in the middle", text_type_text)], "**", text_type_bold)
+# print(new_nodes)
