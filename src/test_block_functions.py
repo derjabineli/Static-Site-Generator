@@ -106,6 +106,26 @@ class TestHTMLNode(unittest.TestCase):
         markdown = "# Main Heading"
         markdown_type = block_to_block_type(markdown)
         self.assertEqual(markdown_type, "heading")
+
+    def test_block_to_blocktype_heading2(self):
+        markdown = "#### Main Heading"
+        markdown_type = block_to_block_type(markdown)
+        self.assertEqual(markdown_type, "heading")
+    
+    def test_block_to_blocktype_heading3(self):
+        markdown = "###### Main Heading"
+        markdown_type = block_to_block_type(markdown)
+        self.assertEqual(markdown_type, "heading")
+    
+    def test_block_to_blocktype_incorrect_heading(self):
+        markdown = "####### Main Heading"
+        markdown_type = block_to_block_type(markdown)
+        self.assertEqual(markdown_type, "paragraph")
+
+    def test_block_to_blocktype_incorrect_heading(self):
+        markdown = "#Main Heading"
+        markdown_type = block_to_block_type(markdown)
+        self.assertEqual(markdown_type, "paragraph")
     
     def test_block_to_blocktype_code(self):
         markdown = "``` Code ```"

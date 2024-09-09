@@ -16,7 +16,7 @@ def markdown_to_blocks(markdown):
     return formatted_blocks
 
 def block_to_block_type(markdown):
-    if markdown.startswith("#"):
+    if is_heading(markdown):
         return "heading"
     elif markdown.startswith("```") and markdown.endswith("```"):
         return "code"
@@ -28,6 +28,9 @@ def block_to_block_type(markdown):
         return "ordered_list"
     else:
         return "paragraph"
+    
+def is_heading(markdown):
+    return re.match(r"^#{1,6} ", markdown) is not None
 
 def is_block_quote(markdown):
     lines = markdown.split("\n")
