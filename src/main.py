@@ -1,6 +1,11 @@
-from textnode import TextNode
+import os
+import shutil
+from copy_static import copy_files
+
 def main():
-    textnode = TextNode("This is a text node", "bold", "https://www.boot.dev")
-    print(textnode)
+    if os.path.exists("public"):
+        shutil.rmtree("public")
+    copy_files("static", "public")
+    
 
 main()
