@@ -9,7 +9,7 @@ The Static Site Generator takes one or more markdown files and converts them int
 
 ## Features
 - **Markdown to HTML** - Converts markdown (.md) files into html files
-- **Recursive File Handler** - Recursively creates and copies over static files and generates html files.
+- **Recursive File Handler** - Recursively creates and copies over static files and generated html files.
 
 ## Setup
 To run the Static Site Generator on your own machine:
